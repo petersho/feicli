@@ -1,0 +1,4 @@
+
+all: 
+	gcc -Wall -g -c console.c -o console.o
+	gcc -g -o pcli console.o
