@@ -88,16 +88,18 @@ struct cmd_table cmd_system_tbl[2] = {
 	CMD_TBL_ENTRY(NULL, 0, NULL, NULL)
 };
 
-struct cmd_table *topcmd = NULL;
-struct cmd_table *currcmd = NULL;
+//struct cmd_table *topcmd = NULL;
+//struct cmd_table *currcmd = NULL;
 
+struct cmd_list *topcmd = NULL;
+struct cmd_list *currcmd = NULL;
 
 int show_cmd_help()
 {
-	struct cmd_table *curr = topcmd;
+	struct cmd_list *curr = topcmd;
 
-	while (curr->name != NULL) {
-		printf("%s\n", curr->usage);
+	while (curr->cmd != NULL) {
+		printf("%s\n", curr->cmd->usage);
 
 		if (curr->next_cmd != NULL) {
 			curr = curr->next_cmd;
@@ -116,23 +118,25 @@ int parse_line()
 
 int parse_cmd2(char *cmd)
 {
-	struct cmd_table *curr = topcmd;
+	struct cmd_list *curr = topcmd;
 	int found = 0;
 
 	if (strlen(cmd) == 0)
 		return 0;
 
-	while (curr->name != NULL) {
-		found = strncmp(curr->name, cmd, curr->len_name);
+	while (curr->cmd != NULL) {
+		found = strncmp(curr->cmd->name, cmd, curr->cmd->len_name);
 		if (!found) {
-			if (curr->Func != NULL) {
-				curr->Func(0,0);
+			if (curr->cmd->Func != NULL) {
+				curr->cmd->Func(0,0);
 				break;
 			}
 		}
 
 		if (curr->next_cmd != NULL)
 			curr = curr->next_cmd;
+		else
+			break;
 	}
 
 	return found;
@@ -161,8 +165,8 @@ int cmd_register(struct cmd_table new[])
 void init_cmd_register()
 {
 	if (topcmd == NULL) {
-		topcmd = malloc(sizeof(struct cmd_table));
-		topcmd->name = NULL;
+		topcmd = malloc(sizeof(struct cmd_list));
+		//topcmd->name = NULL;
 		topcmd->next_cmd = NULL;
 		currcmd = topcmd;
 	}
@@ -173,11 +177,13 @@ int cmd_register(struct cmd_table new[])
 	int i = 0;
 
 	while (new[i].name != NULL) {
-		memcpy(currcmd, &new[i], sizeof(struct cmd_table));
+		//memcpy(currcmd, &new[i], sizeof(struct cmd_table));
 
-		currcmd->next_cmd = malloc(sizeof(struct cmd_table));
+		currcmd->cmd = &new[i];
+
+		currcmd->next_cmd = malloc(sizeof(struct cmd_list));
 		currcmd = currcmd->next_cmd;
-		currcmd->name = NULL;
+		//currcmd->name = NULL;
 		currcmd->next_cmd = NULL;
 
 		i++;

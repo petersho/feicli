@@ -1,15 +1,18 @@
 #define CMDBUF_SIZE	128
 
-struct cmd_table {
+typedef struct cmd_table {
 	char	*name;
 	int	len_name;
 	int 	(*Func)(int argc, char* argv[]);
 	char 	*usage;
-	struct	cmd_table 	*next_cmd;
+	//struct	cmd_table 	*next_cmd;
 //	struct	cmd_table 	*prev_lv;
-	
-};
+} CMD_TABLE;
 
+struct cmd_list {
+	CMD_TABLE		*cmd;
+	struct cmd_list		*next_cmd;
+};
 //int cmd_help(int argc, char* argv[]);
 //int cmd_back(int argc, char* argv[]);
 //int cmd_quit(int argc, char* argv[]);
